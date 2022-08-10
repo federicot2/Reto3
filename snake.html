@@ -1,0 +1,134 @@
+<canvas id="gc" width="400" height="400"></canvas>
+<script>
+window.onload=function() {
+    canv=document.getElementById("gc");
+    ctx=canv.getContext("2d");
+    document.addEventListener("keydown",keyPush);//habilitar el teclado
+    setInterval(game,1000/15);
+}
+px=py=10;
+gs=tc=20;
+ax=ay=14;
+xv=yv=0;//dirección
+trail=[];
+tail = 3;
+ex=ey=4;//enemigo posicion
+e1x=e1y=16;//enemigo posicion 1
+
+score=0; //cuantas manzana se come la snake
+val=null;//variable que almacena la función
+
+function game() {
+
+    px+=xv; 
+    py+=yv;
+    if(px<0) {
+        px= tc-1;
+    }
+    if(px>tc-1) {
+        px= 0;
+    }
+    if(py<0) {
+        py= tc-1;
+    }
+    if(py>tc-1) {
+        py= 0;
+    }
+    //FONDO
+    ctx.fillStyle="#fabe69";
+    ctx.fillRect(0,0,canv.width,canv.height);
+ 
+    ctx.fillStyle="#051b7d";
+    for(var i=0;i<trail.length;i++) {
+        ctx.fillRect(trail[i].x*gs,trail[i].y*gs,gs-2,gs-2);
+        if(trail[i].x==px && trail[i].y==py && val!=false) {
+            tail = 3;
+            yv=xv=0;
+            window.alert("PERDISTES! tu score es de: "+score);
+            score=0;
+        }
+    }
+    trail.push({x:px,y:py});
+    while(trail.length>tail) {
+    trail.shift();
+    }
+
+    //COMIDA
+    if(ax==px && ay==py) {
+        tail++;//aumenta uno
+        score++;//puntaje aumenta
+        ax=Math.floor(Math.random()*tc);//la comida se mueve random
+        ay=Math.floor(Math.random()*tc);
+        //enemigo
+        ex=Math.floor(Math.random()*tc);
+        ey=Math.floor(Math.random()*tc);
+        //enemigo 1
+        e1x=Math.floor(Math.random()*tc);
+        e1y=Math.floor(Math.random()*tc);
+    }
+    ctx.fillStyle="#17fc03";
+    ctx.fillRect(ax*gs,ay*gs,gs-2,gs-2);
+
+
+    //SCORE
+    ctx.fillStyle="black"//color de las letras
+    ctx.font="12px verdena"//tamaño y tipo de fuente
+    ctx.fillText("Score: " +score, canv.clientWidth-50,10);
+
+
+    //Enemigo 1
+    if(ex==px && ey==py) {
+        tail=3;
+        px=py=10;
+        yv=xv=0;
+        window.alert("PERDISTES! tu score es de: "+score);
+        score=0;
+    }
+    ctx.fillStyle="#6f097d";
+    ctx.fillRect(ex*gs,ey*gs,gs-2,gs-2);
+
+    //Enemigo 2
+    if(e1x==px && e1y==py) {
+        tail=3;
+        px=py=10;
+        yv=xv=0;
+        window.alert("PERDISTES! tu score es de: "+score);
+        score=0;
+    }
+    ctx.fillStyle="#6f097d";
+    ctx.fillRect(e1x*gs,e1y*gs,gs-2,gs-2);
+
+    //validacion
+    val=gameover();
+    gameover();//llamo a la funcion
+
+
+}
+function gameover(){
+    if(yv===0 && xv===0){
+        return false;
+    }
+}
+   
+
+function keyPush(evt) {
+    switch(evt.keyCode) {
+        case 37:
+        if (xv==1){return;}//valida posicion 1
+            xv=-1;yv=0;
+            break;
+        case 38:
+            if (yv==1){return;}//valida posicion 2
+            xv=0;yv=-1;
+            break;
+        case 39:
+        if (xv==-1) {return;}//valida posicion 1
+            xv=1;yv=0;
+            break;
+        case 40:
+        if (yv==-1) {return;}//valida posicion 2
+            xv=0;yv=1;
+            break;
+    }
+}
+</script>
